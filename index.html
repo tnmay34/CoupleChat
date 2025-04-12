@@ -16,6 +16,8 @@
             --border-radius: 16px;
             --message-radius: 18px;
             --transition: all 0.3s ease;
+            --online: #4CAF50;
+            --offline: #F44336;
         }
 
         * {
@@ -48,6 +50,7 @@
             flex-direction: column;
             overflow: hidden;
             transition: var(--transition);
+            position: relative;
         }
 
         .chat-header {
@@ -58,11 +61,38 @@
             font-size: 1.3rem;
             position: relative;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .chat-header h1 {
             font-weight: 600;
             font-size: 1.4rem;
+            flex: 1;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .online {
+            background-color: var(--online);
+            box-shadow: 0 0 5px var(--online);
+        }
+
+        .offline {
+            background-color: var(--offline);
         }
 
         .chat-messages {
@@ -71,6 +101,8 @@
             overflow-y: auto;
             background-color: var(--background);
             scroll-behavior: smooth;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255, 107, 139, 0.1) 1px, transparent 0);
+            background-size: 20px 20px;
         }
 
         .chat-input {
@@ -120,6 +152,13 @@
 
         #send-btn:active {
             transform: translateY(0);
+        }
+
+        #send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .message {
@@ -182,8 +221,8 @@
             font-size: 0.95rem;
         }
 
-        /* Login Overlay */
-        #login-overlay {
+        /* Login/Register Overlay */
+        #auth-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -201,19 +240,19 @@
             transition: var(--transition);
         }
 
-        #login-overlay h2 {
+        #auth-overlay h2 {
             margin-bottom: 25px;
             font-size: 1.8rem;
             font-weight: 600;
         }
 
-        #login-overlay p {
+        #auth-overlay p {
             margin-bottom: 30px;
             max-width: 350px;
             opacity: 0.9;
         }
 
-        .login-form {
+        .auth-form {
             width: 100%;
             max-width: 350px;
             display: flex;
@@ -221,7 +260,7 @@
             align-items: center;
         }
 
-        #login-email, #login-password {
+        .auth-input {
             padding: 14px 18px;
             margin: 8px 0;
             width: 100%;
@@ -232,13 +271,13 @@
             transition: var(--transition);
         }
 
-        #login-email:focus, #login-password:focus {
+        .auth-input:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
             background-color: white;
         }
 
-        #login-btn {
+        .auth-btn {
             padding: 14px 30px;
             background-color: white;
             color: var(--primary);
@@ -253,17 +292,70 @@
             max-width: 200px;
         }
 
-        #login-btn:hover {
+        .auth-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        #login-status {
+        .auth-btn.secondary {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            margin-top: 10px;
+        }
+
+        #auth-status {
             margin-top: 20px;
             color: rgba(255, 255, 255, 0.9);
             text-align: center;
             max-width: 350px;
             font-size: 0.9rem;
+        }
+
+        .auth-toggle {
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .auth-toggle a {
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Form Toggle */
+        .form-container {
+            width: 100%;
+            position: relative;
+            height: auto;
+            overflow: hidden;
+        }
+
+        .form-page {
+            width: 100%;
+            transition: transform 0.4s ease;
+        }
+
+        .form-page.hidden {
+            position: absolute;
+            top: 0;
+            transform: translateX(100%);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Responsive Design */
@@ -302,7 +394,7 @@
                 font-size: 0.9rem;
             }
             
-            #login-overlay h2 {
+            #auth-overlay h2 {
                 font-size: 1.5rem;
             }
         }
@@ -335,6 +427,14 @@
             margin-bottom: 12px;
             width: fit-content;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            align-items: center;
+        }
+
+        .typing-text {
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            opacity: 0.7;
+            margin-right: 8px;
         }
 
         .typing-dot {
@@ -345,10 +445,6 @@
             margin: 0 2px;
             opacity: 0.4;
             animation: typingAnimation 1.4s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(1) {
-            animation-delay: 0s;
         }
 
         .typing-dot:nth-child(2) {
@@ -363,6 +459,25 @@
             0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
             30% { transform: translateY(-5px); opacity: 1; }
         }
+
+        /* Date separator */
+        .date-separator {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .date-separator::before,
+        .date-separator::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 107, 139, 0.3);
+            margin: 0 10px;
+        }
     </style>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -373,6 +488,10 @@
     <div class="chat-container">
         <div class="chat-header">
             <h1>Our Secure Chat 💖</h1>
+            <div class="user-status">
+                <div class="status-dot offline" id="status-indicator"></div>
+                <span id="status-text">Offline</span>
+            </div>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-input">
@@ -381,15 +500,37 @@
         </div>
     </div>
 
-    <!-- Login Overlay -->
-    <div id="login-overlay">
-        <h2>🔒 Private Couple Chat</h2>
-        <p>Sign in to access your secure messages</p>
-        <div class="login-form">
-            <input type="email" id="login-email" placeholder="your@email.com">
-            <input type="password" id="login-password" placeholder="Password">
-            <button id="login-btn">Unlock Chat</button>
-            <p id="login-status"></p>
+    <!-- Auth Overlay -->
+    <div id="auth-overlay">
+        <h2 id="auth-title">🔒 Private Couple Chat</h2>
+        <p id="auth-subtitle">Sign in to access your secure messages</p>
+        
+        <div class="form-container">
+            <!-- Login Form -->
+            <div class="form-page" id="login-form">
+                <div class="auth-form">
+                    <input type="email" id="login-email" class="auth-input" placeholder="your@email.com" autocomplete="email">
+                    <input type="password" id="login-password" class="auth-input" placeholder="Password" autocomplete="current-password">
+                    <button id="login-btn" class="auth-btn">Sign In</button>
+                    <div class="auth-toggle">
+                        Don't have an account? <a id="show-register">Register</a>
+                    </div>
+                    <p id="auth-status"></p>
+                </div>
+            </div>
+            
+            <!-- Register Form -->
+            <div class="form-page hidden" id="register-form">
+                <div class="auth-form">
+                    <input type="text" id="register-name" class="auth-input" placeholder="Your name" autocomplete="name">
+                    <input type="email" id="register-email" class="auth-input" placeholder="your@email.com" autocomplete="email">
+                    <input type="password" id="register-password" class="auth-input" placeholder="Password (min 6 chars)" autocomplete="new-password">
+                    <input type="password" id="register-confirm" class="auth-input" placeholder="Confirm password" autocomplete="new-password">
+                    <button id="register-btn" class="auth-btn">Create Account</button>
+                    <button class="auth-btn secondary" id="show-login">Back to Login</button>
+                    <p id="register-status"></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -416,30 +557,82 @@
         const chatMessages = document.getElementById('chat-messages');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
-        const loginOverlay = document.getElementById('login-overlay');
+        const authOverlay = document.getElementById('auth-overlay');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
         const loginEmail = document.getElementById('login-email');
         const loginPassword = document.getElementById('login-password');
         const loginBtn = document.getElementById('login-btn');
-        const loginStatus = document.getElementById('login-status');
+        const registerName = document.getElementById('register-name');
+        const registerEmail = document.getElementById('register-email');
+        const registerPassword = document.getElementById('register-password');
+        const registerConfirm = document.getElementById('register-confirm');
+        const registerBtn = document.getElementById('register-btn');
+        const showRegister = document.getElementById('show-register');
+        const showLogin = document.getElementById('show-login');
+        const authStatus = document.getElementById('auth-status');
+        const registerStatus = document.getElementById('register-status');
+        const authTitle = document.getElementById('auth-title');
+        const authSubtitle = document.getElementById('auth-subtitle');
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        // Toggle between login/register forms
+        showRegister.addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            authTitle.textContent = "💝 Create Your Account";
+            authSubtitle.textContent = "Register to start your private chat";
+        });
+
+        showLogin.addEventListener('click', () => {
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            authTitle.textContent = "🔒 Private Couple Chat";
+            authSubtitle.textContent = "Sign in to access your secure messages";
+        });
 
         // Auth State Management
         auth.onAuthStateChanged(user => {
-            if (user && user.emailVerified) {
-                // Successful login
-                loginOverlay.style.display = 'none';
-                initChat(user);
+            if (user) {
+                if (user.emailVerified) {
+                    // Successful login
+                    authOverlay.style.display = 'none';
+                    initChat(user);
+                    updateUserStatus(true);
+                } else {
+                    // Email not verified
+                    authStatus.textContent = "⚠️ Please verify your email (check your inbox)";
+                    authOverlay.style.display = 'flex';
+                    loginForm.classList.remove('hidden');
+                    registerForm.classList.add('hidden');
+                }
             } else {
                 // Show login screen
-                loginOverlay.style.display = 'flex';
-                if (user && !user.emailVerified) {
-                    loginStatus.textContent = "⚠️ Please verify your email (check your inbox)";
-                }
+                authOverlay.style.display = 'flex';
+                updateUserStatus(false);
             }
         });
+
+        // Update online/offline status UI
+        function updateUserStatus(online) {
+            if (online) {
+                statusIndicator.classList.remove('offline');
+                statusIndicator.classList.add('online');
+                statusText.textContent = "Online";
+            } else {
+                statusIndicator.classList.remove('online');
+                statusIndicator.classList.add('offline');
+                statusText.textContent = "Offline";
+            }
+        }
 
         // Login Handler
         loginBtn.addEventListener('click', async () => {
             try {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<div class="spinner"></div>';
+                
                 const userCredential = await auth.signInWithEmailAndPassword(
                     loginEmail.value,
                     loginPassword.value
@@ -450,26 +643,77 @@
                     throw new Error("Verification email sent. Please check your inbox.");
                 }
             } catch (error) {
-                loginStatus.textContent = error.message;
+                authStatus.textContent = error.message;
                 console.error("Login error:", error);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+        });
+
+        // Register Handler
+        registerBtn.addEventListener('click', async () => {
+            try {
+                // Validate inputs
+                if (registerPassword.value !== registerConfirm.value) {
+                    throw new Error("Passwords don't match");
+                }
+                if (registerPassword.value.length < 6) {
+                    throw new Error("Password must be at least 6 characters");
+                }
+
+                registerBtn.disabled = true;
+                registerBtn.innerHTML = '<div class="spinner"></div>';
+                
+                const userCredential = await auth.createUserWithEmailAndPassword(
+                    registerEmail.value,
+                    registerPassword.value
+                );
+                
+                // Send verification email
+                await userCredential.user.sendEmailVerification();
+                
+                // Save user display name
+                await userCredential.user.updateProfile({
+                    displayName: registerName.value
+                });
+                
+                registerStatus.textContent = "✅ Verification email sent! Please check your inbox.";
+                
+                // Switch back to login form after 3 seconds
+                setTimeout(() => {
+                    showLogin.click();
+                    registerStatus.textContent = "";
+                }, 3000);
+                
+            } catch (error) {
+                registerStatus.textContent = error.message;
+                console.error("Registration error:", error);
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Create Account';
             }
         });
 
         // Chat Functionality
         function initChat(user) {
-            const userName = user.email.split('@')[0];
+            const userName = user.displayName || user.email.split('@')[0];
             localStorage.setItem('chatUsername', userName);
 
             // Create typing indicator
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'typing-indicator';
             typingIndicator.innerHTML = `
+                <span class="typing-text">Partner is typing</span>
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
             `;
             typingIndicator.style.display = 'none';
             chatMessages.appendChild(typingIndicator);
+
+            // Track last displayed date
+            let lastDisplayedDate = null;
 
             // Message Sending
             function sendMessage() {
@@ -480,15 +724,18 @@
                 sendBtn.disabled = true;
                 sendBtn.textContent = 'Sending...';
 
+                const timestamp = Date.now();
+                
                 database.ref('messages').push({
                     name: userName,
                     text: message,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                    timestamp: timestamp,
+                    userId: user.uid
                 }).then(() => {
                     userInput.value = '';
                 }).catch(error => {
                     console.error("Send error:", error);
-                    alert("Failed to send: " + error.message);
+                    showErrorToast("Failed to send: " + error.message);
                 }).finally(() => {
                     sendBtn.disabled = false;
                     sendBtn.textContent = 'Send';
@@ -505,12 +752,22 @@
                 .orderByChild('timestamp')
                 .on('child_added', (snapshot) => {
                     const msg = snapshot.val();
-                    displayMessage(msg, msg.name === userName);
+                    displayMessage(msg, msg.userId === user.uid);
                 });
 
             function displayMessage(msg, isCurrentUser) {
                 // Hide typing indicator when message arrives
                 typingIndicator.style.display = 'none';
+                
+                // Check if we need to show a date separator
+                const messageDate = new Date(msg.timestamp).toDateString();
+                if (messageDate !== lastDisplayedDate) {
+                    lastDisplayedDate = messageDate;
+                    const dateSeparator = document.createElement('div');
+                    dateSeparator.className = 'date-separator';
+                    dateSeparator.textContent = formatDate(msg.timestamp);
+                    chatMessages.appendChild(dateSeparator);
+                }
                 
                 const msgDiv = document.createElement('div');
                 msgDiv.className = `message ${isCurrentUser ? 'user-message' : 'bot-message'}`;
@@ -532,21 +789,64 @@
                 });
             }
 
-            // Show typing indicator when other user is typing
-            // (You would need to implement actual typing detection in a real app)
-        }
-
-        // Prevent typing while logged out
-        userInput.addEventListener('focus', () => {
-            if (loginOverlay.style.display !== 'none') {
-                userInput.blur();
-                loginEmail.focus();
+            function formatDate(timestamp) {
+                const today = new Date();
+                const messageDate = new Date(timestamp);
+                
+                if (messageDate.toDateString() === today.toDateString()) {
+                    return "Today";
+                }
+                
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (messageDate.toDateString() === yesterday.toDateString()) {
+                    return "Yesterday";
+                }
+                
+                return messageDate.toLocaleDateString([], { 
+                    weekday: 'long', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
             }
-        });
+
+            // Show error toast
+            function showErrorToast(message) {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.position = 'fixed';
+                toast.style.bottom = '20px';
+                toast.style.left = '50%';
+                toast.style.transform = 'translateX(-50%)';
+                toast.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
+                toast.style.color = 'white';
+                toast.style.padding = '12px 24px';
+                toast.style.borderRadius = '4px';
+                toast.style.zIndex = '1000';
+                toast.style.animation = 'fadeIn 0.3s ease';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'fadeIn 0.3s ease reverse';
+                    setTimeout(() => document.body.removeChild(toast), 300);
+                }, 3000);
+            }
+
+            // Simulate partner typing (in a real app, this would be triggered by actual typing events)
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    typingIndicator.style.display = 'flex';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    setTimeout(() => {
+                        typingIndicator.style.display = 'none';
+                    }, 2000);
+                }
+            }, 10000);
+        }
 
         // Auto-focus email field on load
         window.addEventListener('load', () => {
-            if (loginOverlay.style.display !== 'none') {
+            if (authOverlay.style.display !== 'none') {
                 loginEmail.focus();
             }
         });
