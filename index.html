@@ -5,153 +5,363 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Couple Chat 💌</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #ffebee;
+        :root {
+            --primary: #FF6B8B;
+            --secondary: #FF8E9E;
+            --accent: #FFB3C1;
+            --background: #FFF0F3;
+            --text-dark: #4A4A4A;
+            --text-light: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --message-radius: 18px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.5;
         }
 
         .chat-container {
             width: 100%;
             max-width: 500px;
             height: 90vh;
+            max-height: 800px;
             background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transition: var(--transition);
         }
 
         .chat-header {
-            background: linear-gradient(45deg, #ff758c, #ff7eb3);
-            color: white;
-            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-light);
+            padding: 18px 15px;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header h1 {
+            font-weight: 600;
+            font-size: 1.4rem;
         }
 
         .chat-messages {
             flex: 1;
             padding: 15px;
             overflow-y: auto;
-            background-color: #fff9fa;
+            background-color: var(--background);
+            scroll-behavior: smooth;
         }
 
         .chat-input {
             display: flex;
-            padding: 10px;
-            border-top: 1px solid #ffcdd2;
+            padding: 12px;
+            border-top: 1px solid rgba(255, 107, 139, 0.2);
             background-color: white;
+            align-items: center;
         }
 
         #user-input {
             flex: 1;
-            padding: 10px 15px;
-            border: 1px solid #ffcdd2;
-            border-radius: 20px;
+            padding: 12px 18px;
+            border: 2px solid rgba(255, 107, 139, 0.3);
+            border-radius: 25px;
             outline: none;
             font-size: 1rem;
+            transition: var(--transition);
+            background-color: rgba(255, 179, 193, 0.1);
+        }
+
+        #user-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 139, 0.2);
         }
 
         #send-btn {
             margin-left: 10px;
-            padding: 10px 20px;
-            background: linear-gradient(45deg, #ff758c, #ff7eb3);
-            color: white;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-light);
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+
+        #send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 139, 0.3);
+        }
+
+        #send-btn:active {
+            transform: translateY(0);
         }
 
         .message {
-            max-width: 80%;
-            padding: 10px 15px;
-            border-radius: 18px;
-            margin-bottom: 10px;
-            line-height: 1.4;
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: var(--message-radius);
+            margin-bottom: 12px;
             word-wrap: break-word;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .user-message {
-            background-color: #ff758c;
-            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-light);
             margin-left: auto;
             border-bottom-right-radius: 5px;
         }
 
         .bot-message {
-            background-color: #f8bbd0;
-            color: #333;
+            background-color: white;
+            color: var(--text-dark);
             margin-right: auto;
             border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .message-header {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
-            margin-bottom: 5px;
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+            align-items: center;
+        }
+
+        .user-message .message-header {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .bot-message .message-header {
+            color: rgba(74, 74, 74, 0.7);
         }
 
         .message-sender {
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .message-time {
-            opacity: 0.7;
+            opacity: 0.9;
+            font-size: 0.7rem;
         }
 
+        .message-text {
+            font-size: 0.95rem;
+        }
+
+        /* Login Overlay */
         #login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
             z-index: 1000;
-            display: none;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             color: white;
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
         }
 
         #login-overlay h2 {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        #login-overlay p {
+            margin-bottom: 30px;
+            max-width: 350px;
+            opacity: 0.9;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #login-email, #login-password {
-            padding: 12px 15px;
+            padding: 14px 18px;
             margin: 8px 0;
-            width: 80%;
-            max-width: 300px;
+            width: 100%;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: var(--transition);
+        }
+
+        #login-email:focus, #login-password:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+            background-color: white;
         }
 
         #login-btn {
-            padding: 12px 25px;
-            background: linear-gradient(45deg, #ff758c, #ff7eb3);
-            color: white;
+            padding: 14px 30px;
+            background-color: white;
+            color: var(--primary);
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1rem;
-            margin-top: 15px;
+            font-weight: 600;
+            margin-top: 20px;
             cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            max-width: 200px;
+        }
+
+        #login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         #login-status {
-            margin-top: 15px;
-            color: #ffcdd2;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.9);
             text-align: center;
+            max-width: 350px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .chat-container {
+                height: 100vh;
+                max-height: none;
+                border-radius: 0;
+            }
+            
+            .chat-header {
+                padding: 15px 10px;
+                font-size: 1.1rem;
+            }
+            
+            .message {
+                max-width: 90%;
+                padding: 10px 14px;
+            }
+            
+            #user-input {
+                padding: 10px 15px;
+            }
+            
+            #send-btn {
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .chat-header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .message-text {
+                font-size: 0.9rem;
+            }
+            
+            #login-overlay h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 107, 139, 0.1);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 139, 0.4);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: var(--message-radius);
+            margin-bottom: 12px;
+            width: fit-content;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 2px;
+            opacity: 0.4;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-5px); opacity: 1; }
         }
     </style>
     <!-- Firebase SDK -->
@@ -173,11 +383,14 @@
 
     <!-- Login Overlay -->
     <div id="login-overlay">
-        <h2>🔒 Private Chat Login</h2>
-        <input type="email" id="login-email" placeholder="your@email.com">
-        <input type="password" id="login-password" placeholder="Password">
-        <button id="login-btn">Unlock Chat</button>
-        <p id="login-status"></p>
+        <h2>🔒 Private Couple Chat</h2>
+        <p>Sign in to access your secure messages</p>
+        <div class="login-form">
+            <input type="email" id="login-email" placeholder="your@email.com">
+            <input type="password" id="login-password" placeholder="Password">
+            <button id="login-btn">Unlock Chat</button>
+            <p id="login-status"></p>
+        </div>
     </div>
 
     <script>
@@ -219,7 +432,7 @@
                 // Show login screen
                 loginOverlay.style.display = 'flex';
                 if (user && !user.emailVerified) {
-                    loginStatus.textContent = "⚠️ Please verify your email (check inbox)";
+                    loginStatus.textContent = "⚠️ Please verify your email (check your inbox)";
                 }
             }
         });
@@ -247,21 +460,39 @@
             const userName = user.email.split('@')[0];
             localStorage.setItem('chatUsername', userName);
 
+            // Create typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            typingIndicator.style.display = 'none';
+            chatMessages.appendChild(typingIndicator);
+
             // Message Sending
             function sendMessage() {
                 const message = userInput.value.trim();
                 if (!message) return;
 
+                // Show "sending" state
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Sending...';
+
                 database.ref('messages').push({
                     name: userName,
                     text: message,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
+                }).then(() => {
+                    userInput.value = '';
                 }).catch(error => {
                     console.error("Send error:", error);
                     alert("Failed to send: " + error.message);
+                }).finally(() => {
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send';
                 });
-                
-                userInput.value = '';
             }
 
             sendBtn.addEventListener('click', sendMessage);
@@ -278,6 +509,9 @@
                 });
 
             function displayMessage(msg, isCurrentUser) {
+                // Hide typing indicator when message arrives
+                typingIndicator.style.display = 'none';
+                
                 const msgDiv = document.createElement('div');
                 msgDiv.className = `message ${isCurrentUser ? 'user-message' : 'bot-message'}`;
                 msgDiv.innerHTML = `
@@ -297,12 +531,22 @@
                     minute: '2-digit'
                 });
             }
+
+            // Show typing indicator when other user is typing
+            // (You would need to implement actual typing detection in a real app)
         }
 
         // Prevent typing while logged out
         userInput.addEventListener('focus', () => {
             if (loginOverlay.style.display !== 'none') {
                 userInput.blur();
+                loginEmail.focus();
+            }
+        });
+
+        // Auto-focus email field on load
+        window.addEventListener('load', () => {
+            if (loginOverlay.style.display !== 'none') {
                 loginEmail.focus();
             }
         });
