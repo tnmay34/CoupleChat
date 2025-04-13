@@ -1,542 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Couple Chat 💌</title>
+    <title>Collaborative Canvas</title>
+</head>
     <style>
-        :root {
-            --primary: #FF6B8B;
-            --secondary: #FF8E9E;
-            --accent: #FFB3C1;
-            --background: #FFF0F3;
-            --text-dark: #4A4A4A;
-            --text-light: #FFFFFF;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --border-radius: 16px;
-            --message-radius: 18px;
-            --transition: all 0.3s ease;
-            --online: #4CAF50;
-            --offline: #F44336;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background-color: var(--background);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            line-height: 1.5;
-        }
+    margin: 0;
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
 
-        .chat-container {
-            width: 100%;
-            max-width: 500px;
-            height: 90vh;
-            max-height: 800px;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--text-light);
-            padding: 18px 15px;
-            text-align: center;
-            font-size: 1.3rem;
-            position: relative;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chat-header h1 {
-            font-weight: 600;
-            font-size: 1.4rem;
-            flex: 1;
-        }
-
-        .user-status {
-            display: flex;
-            align-items: center;
-            font-size: 0.8rem;
-            margin-left: 10px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-
-        .online {
-            background-color: var(--online);
-            box-shadow: 0 0 5px var(--online);
-        }
-
-        .offline {
-            background-color: var(--offline);
-        }
-
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background-color: var(--background);
-            scroll-behavior: smooth;
-            background-image: radial-gradient(circle at 1px 1px, rgba(255, 107, 139, 0.1) 1px, transparent 0);
-            background-size: 20px 20px;
-        }
-
-        .chat-input {
-            display: flex;
-            padding: 12px;
-            border-top: 1px solid rgba(255, 107, 139, 0.2);
-            background-color: white;
-            align-items: center;
-        }
-
-        #user-input {
-            flex: 1;
-            padding: 12px 18px;
-            border: 2px solid rgba(255, 107, 139, 0.3);
-            border-radius: 25px;
-            outline: none;
-            font-size: 1rem;
-            transition: var(--transition);
-            background-color: rgba(255, 179, 193, 0.1);
-        }
-
-        #user-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 107, 139, 0.2);
-        }
-
-        #send-btn {
-            margin-left: 10px;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--text-light);
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 80px;
-        }
-
-        #send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 139, 0.3);
-        }
-
-        #send-btn:active {
-            transform: translateY(0);
-        }
-
-        #send-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .message {
-            max-width: 85%;
-            padding: 12px 16px;
-            border-radius: var(--message-radius);
-            margin-bottom: 12px;
-            word-wrap: break-word;
-            position: relative;
-            animation: fadeIn 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .user-message {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--text-light);
-            margin-left: auto;
-            border-bottom-right-radius: 5px;
-        }
-
-        .bot-message {
-            background-color: white;
-            color: var(--text-dark);
-            margin-right: auto;
-            border-bottom-left-radius: 5px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            margin-bottom: 6px;
-            align-items: center;
-        }
-
-        .user-message .message-header {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .bot-message .message-header {
-            color: rgba(74, 74, 74, 0.7);
-        }
-
-        .message-sender {
-            font-weight: 600;
-        }
-
-        .message-time {
-            opacity: 0.9;
-            font-size: 0.7rem;
-        }
-
-        .message-text {
-            font-size: 0.95rem;
-        }
-
-        /* Login/Register Overlay */
-        #auth-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        #auth-overlay h2 {
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-
-        #auth-overlay p {
-            margin-bottom: 30px;
-            max-width: 350px;
-            opacity: 0.9;
-        }
-
-        .auth-form {
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .auth-input {
-            padding: 14px 18px;
-            margin: 8px 0;
-            width: 100%;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            background-color: rgba(255, 255, 255, 0.9);
-            transition: var(--transition);
-        }
-
-        .auth-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-            background-color: white;
-        }
-
-        .auth-btn {
-            padding: 14px 30px;
-            background-color: white;
-            color: var(--primary);
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-            max-width: 200px;
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .auth-btn.secondary {
-            background-color: transparent;
-            color: white;
-            border: 1px solid white;
-            margin-top: 10px;
-        }
-
-        #auth-status {
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.9);
-            text-align: center;
-            max-width: 350px;
-            font-size: 0.9rem;
-        }
-
-        .auth-toggle {
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-
-        .auth-toggle a {
-            color: white;
-            text-decoration: underline;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* Form Toggle */
-        .form-container {
-            width: 100%;
-            position: relative;
-            height: auto;
-            overflow: hidden;
-        }
-
-        .form-page {
-            width: 100%;
-            transition: transform 0.4s ease;
-        }
-
-        .form-page.hidden {
-            position: absolute;
-            top: 0;
-            transform: translateX(100%);
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .chat-container {
-                height: 100vh;
-                max-height: none;
-                border-radius: 0;
-            }
-            
-            .chat-header {
-                padding: 15px 10px;
-                font-size: 1.1rem;
-            }
-            
-            .message {
-                max-width: 90%;
-                padding: 10px 14px;
-            }
-            
-            #user-input {
-                padding: 10px 15px;
-            }
-            
-            #send-btn {
-                padding: 10px 15px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .chat-header h1 {
-                font-size: 1.2rem;
-            }
-            
-            .message-text {
-                font-size: 0.9rem;
-            }
-            
-            #auth-overlay h2 {
-                font-size: 1.5rem;
-            }
-        }
-
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 107, 139, 0.1);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 107, 139, 0.4);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-
-        /* Typing indicator */
-        .typing-indicator {
-            display: flex;
-            padding: 10px 15px;
-            background-color: white;
-            border-radius: var(--message-radius);
-            margin-bottom: 12px;
-            width: fit-content;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            align-items: center;
-        }
-
-        .typing-text {
-            font-size: 0.8rem;
-            color: var(--text-dark);
-            opacity: 0.7;
-            margin-right: 8px;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--primary);
-            border-radius: 50%;
-            margin: 0 2px;
-            opacity: 0.4;
-            animation: typingAnimation 1.4s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingAnimation {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-            30% { transform: translateY(-5px); opacity: 1; }
-        }
-
-        /* Date separator */
-        .date-separator {
-            display: flex;
-            align-items: center;
-            margin: 15px 0;
-            color: var(--primary);
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .date-separator::before,
-        .date-separator::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: rgba(255, 107, 139, 0.3);
-            margin: 0 10px;
-        }
+#drawingCanvas {
+    display: block;
+    background-color: white;
+    cursor: crosshair;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
     </style>
-    <!-- Firebase SDK -->
+<body>
+    <canvas id="drawingCanvas"></canvas>
+    
+    <!-- Add Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-</head>
-<body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>Our Secure Chat 💖</h1>
-            <div class="user-status">
-                <div class="status-dot offline" id="status-indicator"></div>
-                <span id="status-text">Offline</span>
-            </div>
-        </div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
-            <button id="send-btn">Send</button>
-        </div>
-    </div>
-
-    <!-- Auth Overlay -->
-    <div id="auth-overlay">
-        <h2 id="auth-title">🔒 Private Couple Chat</h2>
-        <p id="auth-subtitle">Sign in to access your secure messages</p>
-        
-        <div class="form-container">
-            <!-- Login Form -->
-            <div class="form-page" id="login-form">
-                <div class="auth-form">
-                    <input type="email" id="login-email" class="auth-input" placeholder="your@email.com" autocomplete="email">
-                    <input type="password" id="login-password" class="auth-input" placeholder="Password" autocomplete="current-password">
-                    <button id="login-btn" class="auth-btn">Sign In</button>
-                    <div class="auth-toggle">
-                        Don't have an account? <a id="show-register">Register</a>
-                    </div>
-                    <p id="auth-status"></p>
-                </div>
-            </div>
-            
-            <!-- Register Form -->
-            <div class="form-page hidden" id="register-form">
-                <div class="auth-form">
-                    <input type="text" id="register-name" class="auth-input" placeholder="Your name" autocomplete="name">
-                    <input type="email" id="register-email" class="auth-input" placeholder="your@email.com" autocomplete="email">
-                    <input type="password" id="register-password" class="auth-input" placeholder="Password (min 6 chars)" autocomplete="new-password">
-                    <input type="password" id="register-confirm" class="auth-input" placeholder="Confirm password" autocomplete="new-password">
-                    <button id="register-btn" class="auth-btn">Create Account</button>
-                    <button class="auth-btn secondary" id="show-login">Back to Login</button>
-                    <p id="register-status"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!--<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>-->
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
+        // Initialize Firebase (replace with your config)
+const firebaseConfig = {
             apiKey: "AIzaSyCKGHiF38zDaAxLmoIj0hEs7_kM1mM5ptg",
             authDomain: "realtime-database-d3877.firebaseapp.com",
             databaseURL: "https://realtime-database-d3877-default-rtdb.firebaseio.com",
@@ -546,310 +38,88 @@
             appId: "1:396342266398:web:a5e00d9897a6a2b332fc0f"
         };
 
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const database = firebase.database();
-        const auth = firebase.auth();
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-        // DOM Elements
-        const chatMessages = document.getElementById('chat-messages');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const authOverlay = document.getElementById('auth-overlay');
-        const loginForm = document.getElementById('login-form');
-        const registerForm = document.getElementById('register-form');
-        const loginEmail = document.getElementById('login-email');
-        const loginPassword = document.getElementById('login-password');
-        const loginBtn = document.getElementById('login-btn');
-        const registerName = document.getElementById('register-name');
-        const registerEmail = document.getElementById('register-email');
-        const registerPassword = document.getElementById('register-password');
-        const registerConfirm = document.getElementById('register-confirm');
-        const registerBtn = document.getElementById('register-btn');
-        const showRegister = document.getElementById('show-register');
-        const showLogin = document.getElementById('show-login');
-        const authStatus = document.getElementById('auth-status');
-        const registerStatus = document.getElementById('register-status');
-        const authTitle = document.getElementById('auth-title');
-        const authSubtitle = document.getElementById('auth-subtitle');
-        const statusIndicator = document.getElementById('status-indicator');
-        const statusText = document.getElementById('status-text');
+// Canvas setup
+const canvas = document.getElementById('drawingCanvas');
+const ctx = canvas.getContext('2d');
 
-        // Toggle between login/register forms
-        showRegister.addEventListener('click', () => {
-            loginForm.classList.add('hidden');
-            registerForm.classList.remove('hidden');
-            authTitle.textContent = "💝 Create Your Account";
-            authSubtitle.textContent = "Register to start your private chat";
-        });
+// Set canvas to full window size
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-        showLogin.addEventListener('click', () => {
-            registerForm.classList.add('hidden');
-            loginForm.classList.remove('hidden');
-            authTitle.textContent = "🔒 Private Couple Chat";
-            authSubtitle.textContent = "Sign in to access your secure messages";
-        });
+// Drawing state
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
 
-        // Auth State Management
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                if (user.emailVerified) {
-                    // Successful login
-                    authOverlay.style.display = 'none';
-                    initChat(user);
-                    updateUserStatus(true);
-                } else {
-                    // Email not verified
-                    authStatus.textContent = "⚠️ Please verify your email (check your inbox)";
-                    authOverlay.style.display = 'flex';
-                    loginForm.classList.remove('hidden');
-                    registerForm.classList.add('hidden');
-                }
-            } else {
-                // Show login screen
-                authOverlay.style.display = 'flex';
-                updateUserStatus(false);
-            }
-        });
+// Drawing styles
+ctx.strokeStyle = '#000000';
+ctx.lineWidth = 5;
+ctx.lineCap = 'round';
+ctx.lineJoin = 'round';
 
-        // Update online/offline status UI
-        function updateUserStatus(online) {
-            if (online) {
-                statusIndicator.classList.remove('offline');
-                statusIndicator.classList.add('online');
-                statusText.textContent = "Online";
-            } else {
-                statusIndicator.classList.remove('online');
-                statusIndicator.classList.add('offline');
-                statusText.textContent = "Offline";
-            }
-        }
+// Local drawing functions
+function startDrawing(e) {
+    isDrawing = true;
+    [lastX, lastY] = [e.clientX, e.clientY];
+}
 
-        // Login Handler
-        loginBtn.addEventListener('click', async () => {
-            try {
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = '<div class="spinner"></div>';
-                
-                const userCredential = await auth.signInWithEmailAndPassword(
-                    loginEmail.value,
-                    loginPassword.value
-                );
-                
-                if (!userCredential.user.emailVerified) {
-                    await userCredential.user.sendEmailVerification();
-                    throw new Error("Verification email sent. Please check your inbox.");
-                }
-            } catch (error) {
-                authStatus.textContent = error.message;
-                console.error("Login error:", error);
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Sign In';
-            }
-        });
+function draw(e) {
+    if (!isDrawing) return;
+    
+    // Draw locally
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.clientX, e.clientY);
+    ctx.stroke();
+    
+    // Send drawing data to Firebase
+    const drawingData = {
+        x1: lastX,
+        y1: lastY,
+        x2: e.clientX,
+        y2: e.clientY,
+        color: ctx.strokeStyle,
+        width: ctx.lineWidth
+    };
+    
+    database.ref('drawings').push(drawingData);
+    
+    [lastX, lastY] = [e.clientX, e.clientY];
+}
 
-        // Register Handler
-        registerBtn.addEventListener('click', async () => {
-            try {
-                // Validate inputs
-                if (registerPassword.value !== registerConfirm.value) {
-                    throw new Error("Passwords don't match");
-                }
-                if (registerPassword.value.length < 6) {
-                    throw new Error("Password must be at least 6 characters");
-                }
+function stopDrawing() {
+    isDrawing = false;
+}
 
-                registerBtn.disabled = true;
-                registerBtn.innerHTML = '<div class="spinner"></div>';
-                
-                const userCredential = await auth.createUserWithEmailAndPassword(
-                    registerEmail.value,
-                    registerPassword.value
-                );
-                
-                // Send verification email
-                await userCredential.user.sendEmailVerification();
-                
-                // Save user display name
-                await userCredential.user.updateProfile({
-                    displayName: registerName.value
-                });
-                
-                registerStatus.textContent = "✅ Verification email sent! Please check your inbox.";
-                
-                // Switch back to login form after 3 seconds
-                setTimeout(() => {
-                    showLogin.click();
-                    registerStatus.textContent = "";
-                }, 3000);
-                
-            } catch (error) {
-                registerStatus.textContent = error.message;
-                console.error("Registration error:", error);
-            } finally {
-                registerBtn.disabled = false;
-                registerBtn.textContent = 'Create Account';
-            }
-        });
+// Event listeners for local drawing
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
 
-        // Chat Functionality
-        function initChat(user) {
-            const userName = user.displayName || user.email.split('@')[0];
-            localStorage.setItem('chatUsername', userName);
-
-            // Create typing indicator
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'typing-indicator';
-            typingIndicator.innerHTML = `
-                <span class="typing-text">Partner is typing</span>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
-            typingIndicator.style.display = 'none';
-            chatMessages.appendChild(typingIndicator);
-
-            // Track last displayed date
-            let lastDisplayedDate = null;
-
-            // Message Sending
-            function sendMessage() {
-                const message = userInput.value.trim();
-                if (!message) return;
-
-                // Show "sending" state
-                sendBtn.disabled = true;
-                sendBtn.textContent = 'Sending...';
-
-                const timestamp = Date.now();
-                
-                database.ref('messages').push({
-                    name: userName,
-                    text: message,
-                    timestamp: timestamp,
-                    userId: user.uid
-                }).then(() => {
-                    userInput.value = '';
-                }).catch(error => {
-                    console.error("Send error:", error);
-                    showErrorToast("Failed to send: " + error.message);
-                }).finally(() => {
-                    sendBtn.disabled = false;
-                    sendBtn.textContent = 'Send';
-                });
-            }
-
-            sendBtn.addEventListener('click', sendMessage);
-            userInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessage();
-            });
-
-            // Message Receiving
-            database.ref('messages')
-                .orderByChild('timestamp')
-                .on('child_added', (snapshot) => {
-                    const msg = snapshot.val();
-                    displayMessage(msg, msg.userId === user.uid);
-                });
-
-            function displayMessage(msg, isCurrentUser) {
-                // Hide typing indicator when message arrives
-                typingIndicator.style.display = 'none';
-                
-                // Check if we need to show a date separator
-                const messageDate = new Date(msg.timestamp).toDateString();
-                if (messageDate !== lastDisplayedDate) {
-                    lastDisplayedDate = messageDate;
-                    const dateSeparator = document.createElement('div');
-                    dateSeparator.className = 'date-separator';
-                    dateSeparator.textContent = formatDate(msg.timestamp);
-                    chatMessages.appendChild(dateSeparator);
-                }
-                
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `message ${isCurrentUser ? 'user-message' : 'bot-message'}`;
-                msgDiv.innerHTML = `
-                    <div class="message-header">
-                        <span class="message-sender">${msg.name}</span>
-                        <span class="message-time">${formatTime(msg.timestamp)}</span>
-                    </div>
-                    <div class="message-text">${msg.text}</div>
-                `;
-                chatMessages.appendChild(msgDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            function formatTime(timestamp) {
-                return new Date(timestamp).toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit'
-                });
-            }
-
-            function formatDate(timestamp) {
-                const today = new Date();
-                const messageDate = new Date(timestamp);
-                
-                if (messageDate.toDateString() === today.toDateString()) {
-                    return "Today";
-                }
-                
-                const yesterday = new Date(today);
-                yesterday.setDate(yesterday.getDate() - 1);
-                if (messageDate.toDateString() === yesterday.toDateString()) {
-                    return "Yesterday";
-                }
-                
-                return messageDate.toLocaleDateString([], { 
-                    weekday: 'long', 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
-            }
-
-            // Show error toast
-            function showErrorToast(message) {
-                const toast = document.createElement('div');
-                toast.textContent = message;
-                toast.style.position = 'fixed';
-                toast.style.bottom = '20px';
-                toast.style.left = '50%';
-                toast.style.transform = 'translateX(-50%)';
-                toast.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
-                toast.style.color = 'white';
-                toast.style.padding = '12px 24px';
-                toast.style.borderRadius = '4px';
-                toast.style.zIndex = '1000';
-                toast.style.animation = 'fadeIn 0.3s ease';
-                document.body.appendChild(toast);
-                
-                setTimeout(() => {
-                    toast.style.animation = 'fadeIn 0.3s ease reverse';
-                    setTimeout(() => document.body.removeChild(toast), 300);
-                }, 3000);
-            }
-
-            // Simulate partner typing (in a real app, this would be triggered by actual typing events)
-            setInterval(() => {
-                if (Math.random() > 0.7) {
-                    typingIndicator.style.display = 'flex';
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    setTimeout(() => {
-                        typingIndicator.style.display = 'none';
-                    }, 2000);
-                }
-            }, 10000);
-        }
-
-        // Auto-focus email field on load
-        window.addEventListener('load', () => {
-            if (authOverlay.style.display !== 'none') {
-                loginEmail.focus();
-            }
-        });
+// Listen for remote drawings
+database.ref('drawings').on('child_added', (snapshot) => {
+    const data = snapshot.val();
+    
+    // Draw the received line
+    ctx.strokeStyle = data.color;
+    ctx.lineWidth = data.width;
+    ctx.beginPath();
+    ctx.moveTo(data.x1, data.y1);
+    ctx.lineTo(data.x2, data.y2);
+    ctx.stroke();
+    
+    // Reset to default style
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 5;
+});
     </script>
 </body>
 </html>
